@@ -27,6 +27,24 @@ function getUser(id){
     });
 }
 
+function getAllUsers(){
+    return new Promise(async (ok,ko) =>{
+        const conexion = conectar();
+
+        try{
+            let users = await conexion`SELECT * FROM users`;
+            //cuando devuelve los colores cierra la conexion de la base de datos
+            conexion.end();
+            //retorna colores si salio todo OK
+            ok(users);
+
+        }catch(error){
+            ko({ error : "error en BBDD"});
+        }
+
+    });
+}
+
 function getTracks(id){
     return new Promise(async (ok,ko) =>{
         const conexion = conectar();
@@ -125,6 +143,11 @@ function deleteTrack(id){
 .then( x => console.log(x))
 .catch( x => console.log(x))*/
 
+/*
+getAllUsers()
+.then( x => console.log(x))
+.catch( x => console.log(x)) */
+
 /*createTrack("url.com", "TituloX", "ArtistaX", 23)
 .then( x => console.log(x))
 .catch( x => console.log(x))*/
@@ -147,4 +170,4 @@ deleteTrack(7)
 .catch( x => console.log(x))*/
 
 
-module.exports = {getUser, createTrack, getTracks, deleteTrack, updateTrack} ;
+module.exports = {getUser, getAllUsers, createTrack, getTracks, deleteTrack, updateTrack} ;

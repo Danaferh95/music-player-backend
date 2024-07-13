@@ -2,25 +2,73 @@ require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
-const bodyParser = require('body-parser');
+const {urlencoded, json} = require('body-parser');
 const fetch = require('node-fetch');
 const { parseBlob  } = require('music-metadata-browser');
+const session = require("express-session");
 
 const { findFolder, createFolder, uploadFileToGoogleDrive, deleteFileFromGoogleDrive } = require("./google-functions");
-const { getUser, createTrack, getTracks, deleteTrack, updateTrack } = require("./db");
+const { getUser, getAllUsers, createTrack, getTracks, deleteTrack, updateTrack } = require("./db");
 
 const servidor = express();
 
 servidor.use(cors()); 
 
+servidor.use(session({
+  secret: "Este es un secreto",
+  resave: true,
+  saveUninitialized : false
+}));
 
-servidor.use(bodyParser.json()); 
+
+servidor.use(urlencoded({ extended : true }));
+servidor.use(json());
 
 
 // Configuramos multer para que utilice el memoryStorage y guarde momentáneamente la data del archivo para luego cargarlo directamente en google
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+
+
+servidor.post("/login", async (req, res) => {
+  let resultado = "ko";
+  let id_user = null;
+  //console.log(req.body);
+
+    try {
+
+      const currentUsers = await getAllUsers();
+      for (let i = 0; i < currentUsers.length; i++) {
+        if (currentUsers[i].user_name === req.body.user_name) {
+            if (currentUsers[i].user_password === req.body.user_password) {
+                req.session.user_name = currentUsers[i].user_name;
+                resultado = "ok";
+                id_user = currentUsers[i].id_user;
+                //console.log(id_user);
+                break; // Si coincide cerramos
+            }
+        }
+    }
+
+    res.json({ resultado, id_user : id_user }); //mandamos el resultado y el id del usuario que se logeo
+      
+  } catch (error) {
+      console.error('Error during login:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+
+});
+
+servidor.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to log out' });
+    }
+    res.clearCookie('connect.sid'); // Assuming you're using the default session cookie name
+    res.json({ message: 'Logged out successfully' });
+  });
+});
 
 
 
