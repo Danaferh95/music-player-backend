@@ -73,6 +73,34 @@ function createTrack(id_track, url, title, artist, id_user){
 }
 
 
+
+function updateTrack(id_track, title, artist){
+
+    return new Promise(async (ok,ko) =>{
+        const conexion = conectar();
+
+        try{
+
+            let [{ id_track: insertedId }] = await conexion`
+                UPDATE tracks
+                SET title = ${title}, artist = ${artist}
+                WHERE id_track = ${id_track}
+                RETURNING id_track`; 
+            
+            //cuando devuelve los colores cierra la conexion de la base de datos
+            conexion.end();
+            //retorna colores si salio todo OK
+            ok(insertedId);
+
+        }catch(error){
+            ko({ error : "error en BBDD"});
+        }
+
+    });
+    
+}
+
+
 function deleteTrack(id){
     return new Promise(async (ok,ko) =>{
         const conexion = conectar();
@@ -91,6 +119,8 @@ function deleteTrack(id){
     });
 }
 
+
+
 /*getUser(1)
 .then( x => console.log(x))
 .catch( x => console.log(x))*/
@@ -106,9 +136,15 @@ getTracks(1)
 .catch( x => console.log(x))*/
 
 /*
+updateTrack("14MWIP0XWYsuzX-9_JASB99vxhOB0l01M", "Around Mid", "Synapson")
+.then( x => console.log(x))
+.catch( x => console.log(x))*/
+
+
+/*
 deleteTrack(7)
 .then( x => console.log(x))
 .catch( x => console.log(x))*/
 
 
-module.exports = {getUser, createTrack, getTracks, deleteTrack} ;
+module.exports = {getUser, createTrack, getTracks, deleteTrack, updateTrack} ;

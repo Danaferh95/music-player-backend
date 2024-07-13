@@ -2,37 +2,24 @@ require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
-const helmet = require('helmet');
+const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const { parseBlob  } = require('music-metadata-browser');
 
 const { findFolder, createFolder, uploadFileToGoogleDrive, deleteFileFromGoogleDrive } = require("./google-functions");
-const { getUser, createTrack, getTracks, deleteTrack } = require("./db");
+const { getUser, createTrack, getTracks, deleteTrack, updateTrack } = require("./db");
 
 const servidor = express();
 
 servidor.use(cors()); 
-servidor.use(helmet());
 
-// Custom CSP configuration
-servidor.use(helmet.contentSecurityPolicy({
-  directives: {
-    defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "https://apis.google.com"],
-    connectSrc: ["'self'", "https://www.googleapis.com"],
-    mediaSrc: ["'self'", "https://drive.google.com"],
-    frameSrc: ["'self'", "https://drive.google.com"],
-    imgSrc: ["'self'", "data:", "https://drive.google.com"],
-  }
-}));
+
+servidor.use(bodyParser.json()); 
+
 
 // Configuramos multer para que utilice el memoryStorage y guarde momentáneamente la data del archivo para luego cargarlo directamente en google
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-
-
-
-
 
 
 
@@ -60,6 +47,24 @@ servidor.get('/tracks/:id', async(req, res) =>{
   }
 });
 
+
+servidor.put('/updateTrack/:id', async (req, res) => {
+
+  const  id  = req.params.id;
+ const { title, artist } = req.body;
+
+  //console.log(title, artist);
+
+  try {
+    let updatedTrack = await updateTrack(id, title, artist); // Use updateTrack to update the track
+
+    res.json({ message: 'Track updated successfully', id: updatedTrack });
+
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating track in BBDD' });
+  }
+
+});
 
 // se crea la carpeta y se carga el archivo
 servidor.post('/upload', upload.single('mp3file'), async (req, res) => {
