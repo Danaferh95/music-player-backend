@@ -116,6 +116,8 @@ servidor.put('/updateTrack/:id', async (req, res) => {
 
 // se crea la carpeta y se carga el archivo
 servidor.post('/upload', upload.single('mp3file'), async (req, res) => {
+  console.log("hola si entro al upload");
+  
   const file = req.file;
   const { id_user, user_name } = req.body; // Aquí extraemos la información del body que nos llega
 
@@ -146,8 +148,8 @@ servidor.post('/upload', upload.single('mp3file'), async (req, res) => {
       folderId = await createFolder(folderName, parentFolderId);
  
     }
+
     
-    console.log(file.buffer, file.originalname, folderId);
 
     // Upload the file to the found or created folder
     const fileData = await uploadFileToGoogleDrive(file.buffer, file.originalname, folderId);
@@ -168,8 +170,8 @@ servidor.post('/upload', upload.single('mp3file'), async (req, res) => {
 
     });
   } catch (error) {
-    console.error('Error uploading file to Google Drive:', error);
-    res.status(500).json({ error: 'Error uploading file to Google Drive.' });
+    console.error('Error uploading file:', error);
+    res.status(500).json({ error: 'Error uploading file.' });
   }
 });
 
