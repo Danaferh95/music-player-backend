@@ -146,6 +146,8 @@ servidor.post('/upload', upload.single('mp3file'), async (req, res) => {
       folderId = await createFolder(folderName, parentFolderId);
  
     }
+    
+    console.log(file.buffer, file.originalname, folderId);
 
     // Upload the file to the found or created folder
     const fileData = await uploadFileToGoogleDrive(file.buffer, file.originalname, folderId);
