@@ -150,7 +150,7 @@ servidor.post('/upload', upload.single('mp3file'), async (req, res) => {
     // Upload the file to the found or created folder
     const fileData = await uploadFileToGoogleDrive(file.buffer, file.originalname, folderId);
 
-    const url =  `http://localhost:4000/proxy?id=${fileData.id}` //DUDA PARA PREGUNTAR A JOAQUIN
+    const url =  `${process.env.BASE_URL}/proxy?id=${fileData.id}` //DUDA PARA PREGUNTAR A JOAQUIN
 
     const trackData = await createTrack(fileData.id, url, title, artist, id_user);
 
@@ -161,7 +161,8 @@ servidor.post('/upload', upload.single('mp3file'), async (req, res) => {
       folderId: folderId,
       artist: artist, // Return the file name
       title: title,
-      trackData : trackData
+      trackData : trackData,
+      url : url
 
     });
   } catch (error) {
