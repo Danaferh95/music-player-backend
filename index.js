@@ -216,6 +216,19 @@ servidor.delete('/delete-file/:id', async (req, res) => {
 });
 
 
+// 404 error 
+servidor.use((req, res) => {
+  res.status(404);
+  res.json({ error: "recurso no encontrado" });
+});
+
+// Error general
+servidor.use((error, req, res, next) => {
+  res.status(500);
+  res.json({ error: "error en la petición" });
+});
+
+
 
 
 
