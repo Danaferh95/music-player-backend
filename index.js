@@ -22,6 +22,7 @@ const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
 const {urlencoded, json} = require('body-parser');
+const fetch = require('node-fetch');
 const { parseBlob  } = require('music-metadata-browser');
 const session = require("express-session");
 
