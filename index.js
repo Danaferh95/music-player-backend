@@ -12,6 +12,7 @@ Cors para manejar los permisos de acceso entre websites
 Body-parser para que se encarge del parse de los json
 Music-metadata-browser para que recolectemos la información de los MP3s (artista, titulo)
 Express-session para que maneje nuestro login
+Node-fetch para que NODEjs pueda implementarlo ya que no lo tiene de forma nativa
 
 */
 
