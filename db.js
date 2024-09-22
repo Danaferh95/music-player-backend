@@ -183,10 +183,10 @@ getUser(1)
 .then( x => console.log(x))
 .catch( x => console.log(x))*/
 
-
+/*
 getAllUsers()
 .then( x => console.log(x))
-.catch( x => console.log(x)) 
+.catch( x => console.log(x)) */
 
 /*createTrack("url.com", "TituloX", "ArtistaX", 23)
 .then( x => console.log(x))
